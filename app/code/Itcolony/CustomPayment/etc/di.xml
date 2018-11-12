@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Custom Payment Facade Virtual Type Configuration-->
+  <virtualType name="ItcolonyCustomPaymentFacade" type="Magento\Payment\Model\Method\Adapter">
+      <arguments>
+          <argument name="code" xsi:type="string">itcolony_custompayment</argument>
+          <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form\Cc</argument>
+          <argument name="infoBlockType" xsi:type="string">ItcolonyCustomPaymentConfigurableInfo</argument>
+          <argument name="valueHandlerPool" xsi:type="object">ItcolonyCustomPaymentValueHandlerPool</argument>
+          <argument name="commandPool" xsi:type="object">ItcolonyCustomPaymentCommandPool</argument>
+      </arguments>
+  </virtualType>
+    <!-- Custom Payment Value HandlerPool Configuration-->
+    <virtualType name="ItcolonyCustomPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">ItcolonyCustomPaymentValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Custom Payment Value Handler Configuration-->
+    <virtualType name="ItcolonyCustomPaymentValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">Itcolony\CustomPayment\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+    <!-- Custom Payment Gateway Config-->
+    <virtualType name="Itcolony\CustomPayment\Gateway\Config\Config" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">itcolony_custompayment</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom Payment CommandPool Configuration-->
+    <virtualType name="ItcolonyCustomPaymentCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">Magento\Payment\Gateway\Command\NullCommand</item>
+                <item name="capture" xsi:type="string">ItcolonyCustomPaymentChargeCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom Payment Request Charge Transaction Builder-->
+    <virtualType name="ItcolonyCustomPaymentChargeTransactionBuilder" type="Itcolony\CustomPayment\Gateway\Request\RequestBuilder">
+        <arguments>
+            <argument name="builder" xsi:type="object">ItcolonyCustomPaymentChargeBuilderComposite</argument>
+        </arguments>
+    </virtualType>
+    <!-- Custom Payment Request Charge Transaction Builder Composite-->
+    <virtualType name="ItcolonyCustomPaymentChargeBuilderComposite" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="charge" xsi:type="string">Itcolony\CustomPayment\Gateway\Request\Builder\Charge</item>
+                <item name="payment" xsi:type="string">Itcolony\CustomPayment\Gateway\Request\Builder\Payment</item>
+                <item name="productItems" xsi:type="string">Itcolony\CustomPayment\Gateway\Request\Builder\ProductItems</item>
+                <item name="totals" xsi:type="string">Itcolony\CustomPayment\Gateway\Request\Builder\Totals</item>
+                <item name="address" xsi:type="string">Itcolony\CustomPayment\Gateway\Request\Builder\Address</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom Payment Charge Command-->
+    <virtualType name="ItcolonyCustomPaymentChargeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">ItcolonyCustomPaymentChargeTransactionBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">Itcolony\CustomPayment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Itcolony\CustomPayment\Gateway\Http\Client</argument>
+            <argument name="handler" xsi:type="object">ItcolonyCustomPaymentChargeHandler</argument>
+            <argument name="validator" xsi:type="object">Itcolony\CustomPayment\Gateway\Validator\GeneralResponseValidator</argument>
+        </arguments>
+    </virtualType>
+    
+    <type name="Itcolony\CustomPayment\Gateway\Http\Client">
+        <arguments>
+            <argument name="logger" xsi:type="object">ItcolonyCustomPaymentLogger</argument>
+            <argument name="converter" xsi:type="object">Itcolony\CustomPayment\Gateway\Converter\JsonToArray</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="ItcolonyCustomPaymentLogger" type="Magento\Payment\Model\Method\Logger">
+        <arguments>
+            <argument name="config" xsi:type="object">Itcolony\CustomPayment\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+    
+    <type name="Itcolony\CustomPayment\Gateway\Converter\Converter">
+        <arguments>
+            <argument name="converter" xsi:type="object">Itcolony\CustomPayment\Gateway\Converter\ArrayToJson</argument>
+        </arguments>
+    </type>
+    
+    <virtualType name="ItcolonyCustomPaymentChargeHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="payment_details" xsi:type="string">Itcolony\CustomPayment\Gateway\Response\PaymentHandler</item>
+                <item name="transaction_details" xsi:type="string">Itcolony\CustomPayment\Gateway\Response\TransactionAdditonalInfoHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="ItcolonyCustomPaymentConfigurableInfo" type="Magento\Payment\Block\ConfigurableInfo">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="methodCode" xsi:type="string">itcolony_custompayment</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- New logger File Command-->
+    <type name="Itcolony\CustomPayment\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Itcolony\CustomPayment\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">custom_payment</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Itcolony\CustomPayment\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

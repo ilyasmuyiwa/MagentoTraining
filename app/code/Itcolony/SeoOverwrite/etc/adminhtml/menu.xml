@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Itcolony_SeoOverwrite::seodata" title="Seo Data" module="Itcolony_SeoOverwrite" sortOrder="1" parent="Magento_Backend::marketing_seo" action="seooverwrite/metadata" resource="Itcolony_SeoOverwrite::seodata"/>
+    </menu>
+</config>

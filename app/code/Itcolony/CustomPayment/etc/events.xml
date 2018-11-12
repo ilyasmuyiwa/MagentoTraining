@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="payment_method_assign_data_itcolony_custompayment">
+        <observer name="itcolony_custompayment_gateway_data_assign" instance="Itcolony\CustomPayment\Observer\DataAssignObserver" />
+    </event>
+</config>

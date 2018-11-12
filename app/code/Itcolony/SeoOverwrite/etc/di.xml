@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\ImportExport\Controller\Adminhtml\Import\Download" type="Itcolony\SeoOverwrite\Controller\Adminhtml\Import\Download"/>
+        <virtualType name="MetadataGridDataProvider" type="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+            <arguments>
+                <argument name="collection" xsi:type="object" shared="false">Itcolony\SeoOverwrite\Model\Resource\Metadata\Collection</argument>
+                <argument name="filterPool" xsi:type="object" shared="false">MetadataGridFilterPool</argument> <!-- Define new object for filters -->
+            </arguments>
+        </virtualType>
+
+        <!-- Create our type MemberGridFilterPool -->
+        <virtualType name="MetadataGridFilterPool" type="Magento\Framework\View\Element\UiComponent\DataProvider\FilterPool">
+            <arguments>
+                <argument name="appliers" xsi:type="array">
+                    <item name="regular" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\RegularFilter</item>
+                    <item name="fulltext" xsi:type="object">Magento\Framework\View\Element\UiComponent\DataProvider\FulltextFilter</item>
+                </argument>
+            </arguments>
+        </virtualType>
+
+
+        <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+            <arguments>
+                <argument name="collections" xsi:type="array">
+                    <item name="seooverwrite_metadata_listing_data_source" xsi:type="string">Itcolony\SeoOverwrite\Model\ResourceModel\Grid\Metadata\Collection</item>
+                </argument>
+            </arguments>
+        </type>
+
+
+
+
+
+
+        <virtualType name="Itcolony\SeoOverwrite\Model\ResourceModel\Grid\Metadata\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+            <arguments>
+                <argument name="mainTable" xsi:type="string">seo_data</argument>
+                <argument name="resourceModel" xsi:type="string">Itcolony\SeoOverwrite\Model\ResourceModel\Update</argument>
+            </arguments>
+        </virtualType>
+
+
+
+
+
+</config>
